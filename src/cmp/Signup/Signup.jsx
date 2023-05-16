@@ -1,5 +1,14 @@
-import Cookies from "universal-cookie";
+import {
+  useDispatch,
+  useSelector
+} from "react-redux";
+import {
+  signupRequest
+} from "./Signup.action";
 
+
+
+import Cookies from "universal-cookie";
 import {
   Button,
   Typography,
@@ -27,7 +36,10 @@ import {
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 const Signup = ()=>{
+  const dispatch = useDispatch();
+  const {SignupReducer} = useSelector(response=>response);
   const cookie = new Cookies();
+
   const signupForm = {
     fullname: "er saurav",
     mobile: "9199987267",
@@ -55,8 +67,6 @@ const Signup = ()=>{
   const [input,setInput] = useState(signupForm);
   const [error,setError] = useState(signupFormError);
   const [checked,setChecked] = useState(false);
-  const [request,setRequest] = useState(null);
-  const [httpResponse,httpError,httpLoader] = useHttp(request);
   const [sweetAlert,setSweetAlert] = useState({
     state: false,
     title: "",
@@ -64,30 +74,30 @@ const Signup = ()=>{
     message: ""
   });
 
-  useEffect(()=>{
-    if(request)
+  const checkForSignup = ()=>{
+    if(SignupReducer.error)
     {
-      if(httpResponse)
-      {
-        cookie.set("authToken",httpResponse.token,{maxAge: 86400});
-        return setSweetAlert({
-          state: true,
-          title: "Signup Success",
-          icon: "success",
-          message: "Signup is completed try to login"
-        });
-      }
-      if(httpError)
-      {
-        return setSweetAlert({
-          state: true,
-          title: "Signup Failed",
-          icon: "error",
-          message: httpError.data.message
-        });
-      }
+      return setSweetAlert({
+        state: true,
+        title: "Signup Failed",
+        icon: "error",
+        message: SignupReducer.error.message
+      });
     }
-  },[httpResponse,httpError,httpLoader]);
+
+    if(SignupReducer.data)
+    {
+      cookie.set("authToken",SignupReducer.data.token,{maxAge: 86400});
+      return setSweetAlert({
+        state: true,
+        title: "Good Job",
+        icon: "success",
+        message: "Signup is completed please try to login"
+      });
+    }
+  }
+
+  useEffect(checkForSignup,[SignupReducer]);
 
   const Alert = ()=>{
     const alert = (
@@ -99,7 +109,7 @@ const Signup = ()=>{
           customButtons={
             <>
               <Button onClick={()=>setSweetAlert({state:false})} variant="outlined" color="warning" sx={{ py:1, mr: 2 }}>Cancel</Button>
-              {httpResponse ? <Button variant="contained" color="success" sx={{ py:1 }} component={Link} to="/admin-panel">Login</Button> : null}
+              <Button variant="contained" color="success" sx={{ py:1 }} component={Link} to="/admin-panel">Login</Button>
             </>
           }
           onConfirm={()=>{}}
@@ -294,11 +304,7 @@ const Signup = ()=>{
     const isValid = validateOnSubmit();
     if(isValid)
     {
-      return setRequest({
-        method: "post",
-        url: "http://localhost:3434/signup",
-        data: input
-      });
+      dispatch(signupRequest(input));
     }
   }
 
@@ -375,7 +381,7 @@ const Signup = ()=>{
                 <Button type="button" component={Link} to="login">Already have an account</Button>
               </Stack>
               <div>
-                <Button
+                <Button loading={SignupReducer.isLoading}
                   disabled={
                     error.fullname.state ||
                     error.mobile.state ||

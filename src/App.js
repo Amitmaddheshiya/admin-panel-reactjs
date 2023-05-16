@@ -1,3 +1,6 @@
+import "font-awesome/css/font-awesome.min.css";
+import storage from "./storage";
+import { Provider } from "react-redux";
 import {
   BrowserRouter as Router,
   Routes,
@@ -49,6 +52,7 @@ const App = ()=>{
 
   const design = (
     <>
+    <Provider store={storage}>
     <ThemeProvider theme={theme}>
     <Router>
         <Routes>
@@ -66,7 +70,7 @@ const App = ()=>{
         </Routes>
       </Router>
     </ThemeProvider>
-      
+    </Provider>
     </>
   );
   return design;
