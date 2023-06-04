@@ -7,19 +7,19 @@
         "id": 2,
         "label": "Modern",
         "icon": "airplay",
-        "link": "modern"
+        "link": "dashboard/modern"
       },
       {
         "id": 3,
         "label": "Analytics",
         "icon": "auto_graph",
-        "link": "analytics"
+        "link": "dashboard/analytics"
       },
       {
         "id": 4,
         "label": "Ecommerce",
         "icon": "shopping_bag",
-        "link": "ecommerce"
+        "link": "dashboard/ecommerce"
       }
     ]
   },

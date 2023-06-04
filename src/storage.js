@@ -1,5 +1,7 @@
 import SignupReducer from "./cmp/Signup/Signup.reducer";
 import LoginReducer from "./cmp/Login/Login.reducer";
+import ForgotReducer from "./cmp/Forgot/Forgot.reducer";
+import RevenueReducer from "./cmp/Admin/Dashboard/Modern/RevenueUpdates/Revenue.reducer";
 import { legacy_createStore as createStore } from "redux";
 import{applyMiddleware, combineReducers} from "redux";
 import logger from "redux-logger";
@@ -10,7 +12,9 @@ const middlewares = applyMiddleware(
 );
 const root = combineReducers({
   SignupReducer,
-  LoginReducer
+  LoginReducer,
+  ForgotReducer,
+  RevenueReducer
 });
 const storage = createStore(root,{},middlewares);
 export default storage;

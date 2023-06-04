@@ -6,7 +6,12 @@ import {
   TextField,
   Checkbox,
   FormGroup,
-  FormControlLabel
+  FormControlLabel,
+  InputAdornment,
+  IconButton,
+  OutlinedInput,
+  FormControl,
+  InputLabel
 } from "@mui/material";
 import {
 useDispatch,
@@ -31,10 +36,14 @@ useEffect
 import * as yup from "yup";
 
 const Login = ()=>{
+
+  const [type,setType] = useState("password");
 const cookie = new Cookies();
 const dispatch = useDispatch();
 const {LoginReducer} = useSelector(response=>response);
 const navigate = useNavigate();
+const [remember,setRemember] = useState(false);
+
 const checkForLogin = ()=>{
   if(LoginReducer.userNotFound)
   {
@@ -77,7 +86,23 @@ const checkForLogin = ()=>{
   }
 }
 
-useEffect(checkForLogin,[LoginReducer]);
+const rememberMe = ()=>{
+  let checkUser = localStorage.getItem("user");
+  if(checkUser){
+let user = JSON.parse(checkUser);
+return (
+  setInput(user),
+  setRemember(true),
+  setDisabled(false)
+)
+  }
+}
+
+//useEffect
+useEffect(()=>{
+  checkForLogin();
+  rememberMe();
+},[LoginReducer]);
 
 const [disabled,setDisabled] = useState(true);
 const [input,setInput] = useState({
@@ -148,6 +173,10 @@ const validateSubmit = async ()=>{
 
 const login = (e)=>{
   e.preventDefault();
+  if(remember){
+const string = JSON.stringify(input);
+localStorage.setItem("user",string);
+  }
   dispatch(loginRequest(input));
 }
 const design = (
@@ -172,24 +201,38 @@ const design = (
                 onKeyDown={validateSubmit}
                 onInput={validateInput}
               />
-              <TextField
-                error={error.password.state}
-                helperText={error.password.message}
-                label="Password"
-                variant="outlined"
-                type="password"
-                name="password"
-                value={input.password}
-                onChange={handleInput}
-                onKeyDown={validateSubmit}
-                onInput={validateInput}
-              />
+              <FormControl variant="outlined">
+                  <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                  <OutlinedInput
+                  error={error.password.state}
+                  helperText={error.password.message}
+                  label="Password"
+                  variant="outlined"
+                  type={type}
+                  name="password"
+                  value={input.password}
+                  onChange={handleInput}
+                  onKeyDown={validateSubmit}
+                  onInput={validateInput}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton onClick={()=>type === "password" ? setType("text") : setType("password")}>
+                        <span className="material-icons-outlined">
+                          {
+                            type === "password" ? "visibility" : "visibility_off"
+                          }
+                        </span>
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                </FormControl>
               <Stack direction="row" justifyContent="end">
-                <a href="#">Forgot password ?</a>
+                <Button component={Link} to="/forgot-password">Forgot password ?</Button>
               </Stack>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <FormGroup>
-                  <FormControlLabel control={<Checkbox />} label="Remember me" />
+                  <FormControlLabel control={<Checkbox onChange={()=>setRemember(!remember)} checked={remember} />} label="Remember me" />
                 </FormGroup>
                 <Button loading={LoginReducer.isLoading} disabled={disabled} type="submit" variant="contained" color="secondary" sx={{px: 3,py: 1}}>Login</Button>
               </Stack>

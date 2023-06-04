@@ -48,24 +48,33 @@ import {
 import AdminMenu from "../../json-api/AdminMenu";
 import MediaQuery from "react-responsive";
 
+//main component
 const Admin = ()=>{
   const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const {LoginReducer} = useSelector(response=>response);
-  const checkForLogout = ()=>{
-    if(!LoginReducer.isLogged)
-    {
-      return navigate("/login");
-    }
-  }
-  useEffect(checkForLogout,[LoginReducer]);
+
   const [active,setActive] = useState(true);
   const [activeOnMobile,setActiveOnMobile] = useState(false);
   const [user,setUser] = useState(null);
   const [width,setWidth] = useState(250);
   const [collapsible,setCollapsible] = useState(false);
   const location = useLocation();
+
   let routing = location.pathname.split("/");
+
+
+  //start useEffect hook & function
+  const checkForLogout = ()=>{
+    if(LoginReducer.isLogout)
+    {
+      return navigate("/login");
+    }
+  }
+
+  useEffect(checkForLogout,[LoginReducer]);
+
   const showUserInfo = ()=>{
     if(!user)
     {
@@ -74,7 +83,19 @@ const Admin = ()=>{
       return setUser(userInfo);
     }
   }
-  useEffect(showUserInfo,[user]);
+
+const activeRoute = ()=>{
+  return navigate("/admin-panel/dashboard/modern");
+}
+
+  useEffect(()=>{
+    showUserInfo();
+    activeRoute();
+  },[user]);
+
+   //end useEffect hook & function
+
+
 
   // start - profile menu code
   const [parent,setParent] = useState(null);
@@ -353,7 +374,7 @@ const Admin = ()=>{
           p: 3,
           transition: "0.1s",
           bgcolor: "#f5f5f5",
-          height: "100vh"
+          height: "auto"
         }}>
           <Breadcrumbs aria-label="breadcrumb" sx={{ my: 4 }}>
             {

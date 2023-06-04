@@ -24,6 +24,7 @@ const LoginReducer = (state=Model,action)=>{
       userNotFound: false,
       incorrectPassword: false,
       isLogged: false,
+      isLogout : false,
       data: []
     }
 
@@ -33,6 +34,7 @@ const LoginReducer = (state=Model,action)=>{
       userNotFound: false,
       incorrectPassword: false,
       isLogged: true,
+      isLogout : false,
       data: action.payload
     }
 
@@ -42,6 +44,7 @@ const LoginReducer = (state=Model,action)=>{
       userNotFound: false,
       incorrectPassword: false,
       isLogged: false,
+      isLogout : true,
       data: []
     }
 
@@ -50,6 +53,7 @@ const LoginReducer = (state=Model,action)=>{
       isLoading: false,
       userNotFound: false,
       incorrectPassword: false,
+      isLogout : false,
       isLogged: true
     }
 
@@ -59,6 +63,7 @@ const LoginReducer = (state=Model,action)=>{
       userNotFound: true,
       incorrectPassword: false,
       isLogged: false,
+      isLogout : false,
       data: []
     }
 
@@ -68,6 +73,7 @@ const LoginReducer = (state=Model,action)=>{
       userNotFound: false,
       incorrectPassword: true,
       isLogged: false,
+      isLogout : false,
       data: []
     }
 
