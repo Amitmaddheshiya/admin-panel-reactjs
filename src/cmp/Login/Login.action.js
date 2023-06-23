@@ -9,7 +9,7 @@ import {
 import axios from "axios";
 import Cookies from "universal-cookie";
 
-axios.defaults.baseURL = "http://localhost:3434";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 
 const loginRequest = (user)=>{
@@ -53,7 +53,7 @@ const logoutRequest = ()=>{
       let tmp = sessionStorage.getItem("user");
       let userInfo = JSON.parse(tmp);
       let id = userInfo.userId;
-      const response = await axios({
+      await axios({
         method: "get",
         url: "/logout/"+id
       });

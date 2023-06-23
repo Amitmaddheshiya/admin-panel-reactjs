@@ -2,15 +2,15 @@ import {
   Grid,
   Card,
   CardContent,
-  CardActions,
   Typography,
-  Button
+  Skeleton
 } from "@mui/material";
 
 import Chart from "react-apexcharts";
 import {
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from "react";
 import {
   useDispatch,
@@ -24,10 +24,12 @@ import {
 const Revenue = ()=>{
   const dispatch = useDispatch();
   const {RevenueReducer} = useSelector(response=>response);
-  const getRevenue = ()=>{
+  const getRevenue = useRef();
+  getRevenue.current = ()=>{
     return dispatch(revenueRequest());
   }
-  const setRevenue = ()=>{
+  const setRevenue = useRef();
+  setRevenue.current = ()=>{
     return (
       setCat(RevenueReducer.data.months),
       setSeries([
@@ -45,11 +47,11 @@ const Revenue = ()=>{
   useEffect(()=>{
     if(RevenueReducer.isLoading === null)
     {
-      getRevenue();
+      getRevenue.current();
     }
     if(RevenueReducer.success)
     {
-      setRevenue();
+      setRevenue.current();
     }
   },[RevenueReducer]);
 
@@ -77,15 +79,29 @@ const Revenue = ()=>{
       <Grid item xs={12} sm={6}>
         <Card>
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Revenue Updates
-            </Typography>
-            <Chart
-              options={options}
-              series={series}
-              type="line"
-              height="350px"
-            ></Chart>
+            {
+              RevenueReducer.isLoading ? <div>
+                <div className="d-flex justify-content-between">
+                  <Skeleton variant="circular" width={80} height={80} sx={{mr: 2}} />
+                  <div className="d-flex flex-column flex-grow-1">
+                    <Skeleton variant="rectangular" width={"100%"} height={40} sx={{mb:1}}/>
+                    <Skeleton variant="text" width={"100%"} />
+                  </div>
+                </div>
+                <Skeleton variant="rectangular" width={"100%"} height={320} sx={{mt: 1}}/>
+              </div> : <div>
+              <Typography gutterBottom variant="h5" component="div">
+                Revenue Updates
+              </Typography>
+              <Chart
+                options={options}
+                series={series}
+                type="line"
+                height="350px"
+              ></Chart>
+              </div>
+            }
+
           </CardContent>
         </Card>
       </Grid>

@@ -11,7 +11,8 @@ import {
   IconButton,
   OutlinedInput,
   FormControl,
-  InputLabel
+  InputLabel,
+  FormHelperText
 } from "@mui/material";
 import {
 useDispatch,
@@ -27,24 +28,28 @@ import {
 Link,
 useNavigate
 } from "react-router-dom";
-
+import {
+LoadingButton
+} from "@mui/lab";
 import {
 useState,
-useEffect
+useEffect,
+useRef
 } from "react";
 
 import * as yup from "yup";
 
-const Login = ()=>{
+import MediaQuery from "react-responsive";
 
-  const [type,setType] = useState("password");
+const Login = ()=>{
+const [type,setType] = useState("password");
 const cookie = new Cookies();
 const dispatch = useDispatch();
 const {LoginReducer} = useSelector(response=>response);
 const navigate = useNavigate();
 const [remember,setRemember] = useState(false);
-
-const checkForLogin = ()=>{
+const checkForLogin = useRef();
+checkForLogin.current = ()=>{
   if(LoginReducer.userNotFound)
   {
     return setError((oldData)=>{
@@ -86,30 +91,28 @@ const checkForLogin = ()=>{
   }
 }
 
-const rememberMe = ()=>{
+const rememberMe = useRef();
+rememberMe.current = ()=>{
   let checkUser = localStorage.getItem("user");
-  if(checkUser){
-let user = JSON.parse(checkUser);
-return (
-  setInput(user),
-  setRemember(true),
-  setDisabled(false)
-)
+  if(checkUser)
+  {
+    let user = JSON.parse(checkUser);
+    return (
+      setInput(user),
+      setRemember(true),
+      setDisabled(false)
+    )
   }
 }
-
-//useEffect
 useEffect(()=>{
-  checkForLogin();
-  rememberMe();
+  checkForLogin.current();
+  rememberMe.current();
 },[LoginReducer]);
-
 const [disabled,setDisabled] = useState(true);
 const [input,setInput] = useState({
   username: "",
   password: ""
 });
-
 const [error,setError] = useState({
   username: {
     state: false,
@@ -173,9 +176,10 @@ const validateSubmit = async ()=>{
 
 const login = (e)=>{
   e.preventDefault();
-  if(remember){
-const string = JSON.stringify(input);
-localStorage.setItem("user",string);
+  if(remember)
+  {
+    let string = JSON.stringify(input);
+    localStorage.setItem("user",string);
   }
   dispatch(loginRequest(input));
 }
@@ -184,13 +188,19 @@ const design = (
     <Container>
       <Grid container>
         <Grid item xs={12} sm={6}>
-          <h1>One</h1>
+          <MediaQuery minWidth={1224}>
+            <img src="images/auth.svg" alt="auth" width="100%" />
+          </MediaQuery>
+          <MediaQuery maxWidth={1224}>
+            <img src="images/mobile-auth.png" alt="auth" width="100%" />
+          </MediaQuery>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <h1>Login</h1>
+          <h1 className="py-4">Login</h1>
           <form onSubmit={login}>
             <Stack direction="column" spacing={3}>
               <TextField
+                autoComplete="username"
                 error={error.username.state}
                 helperText={error.username.message}
                 label="Username"
@@ -202,31 +212,34 @@ const design = (
                 onInput={validateInput}
               />
               <FormControl variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                  <OutlinedInput
-                  error={error.password.state}
-                  helperText={error.password.message}
-                  label="Password"
-                  variant="outlined"
-                  type={type}
-                  name="password"
-                  value={input.password}
-                  onChange={handleInput}
-                  onKeyDown={validateSubmit}
-                  onInput={validateInput}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={()=>type === "password" ? setType("text") : setType("password")}>
-                        <span className="material-icons-outlined">
-                          {
-                            type === "password" ? "visibility" : "visibility_off"
-                          }
-                        </span>
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                />
-                </FormControl>
+                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                <OutlinedInput
+                autoComplete="current-password"
+                error={error.password.state}
+                label="Password"
+                variant="outlined"
+                type={type}
+                name="password"
+                value={input.password}
+                onChange={handleInput}
+                onKeyDown={validateSubmit}
+                onInput={validateInput}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={()=>type === "password" ? setType("text") : setType("password")}>
+                      <span className="material-icons-outlined">
+                        {
+                          type === "password" ? "visibility" : "visibility_off"
+                        }
+                      </span>
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+                <FormHelperText className="text-danger">
+                  {error.password.message}
+                </FormHelperText>
+              </FormControl>
               <Stack direction="row" justifyContent="end">
                 <Button component={Link} to="/forgot-password">Forgot password ?</Button>
               </Stack>
@@ -234,7 +247,7 @@ const design = (
                 <FormGroup>
                   <FormControlLabel control={<Checkbox onChange={()=>setRemember(!remember)} checked={remember} />} label="Remember me" />
                 </FormGroup>
-                <Button loading={LoginReducer.isLoading} disabled={disabled} type="submit" variant="contained" color="secondary" sx={{px: 3,py: 1}}>Login</Button>
+                <LoadingButton loading={LoginReducer.isLoading} disabled={disabled} type="submit" variant="contained" color="secondary" sx={{px: 3,py: 1}}>Login</LoadingButton>
               </Stack>
               <Link to="/">Create and account</Link>
             </Stack>

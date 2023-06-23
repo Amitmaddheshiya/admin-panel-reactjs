@@ -1,6 +1,5 @@
 import {
   Drawer,
-  Box,
   List,
   ListItem,
   ListItemButton,
@@ -10,7 +9,6 @@ import {
   AppBar,
   IconButton,
   Toolbar,
-  Button,
   ListSubheader,
   Collapse,
   Avatar,
@@ -18,9 +16,12 @@ import {
   MenuItem,
   Divider,
   Breadcrumbs,
-  Typography
+  Typography,
+  FormGroup,
+  FormControlLabel,
+  Switch
 } from "@mui/material";
-
+import logo from "./logo.webp";
 import { deepOrange } from '@mui/material/colors';
 import {
   useDispatch,
@@ -42,40 +43,52 @@ import {
 
 import {
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from "react";
 
 import AdminMenu from "../../json-api/AdminMenu";
 import MediaQuery from "react-responsive";
 
-//main component
 const Admin = ()=>{
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
-  const {LoginReducer} = useSelector(response=>response);
-
+  const {LoginReducer,AdminReducer} = useSelector(response=>response);
+  const [mode,setMode] = useState("light");
+  const darkMode = (e)=>{
+    if(e.target.checked)
+    {
+      setMode("dark");
+      dispatch({
+        type: "dark"
+      });
+    }
+    else {
+      setMode("light");
+      dispatch({
+        type: "light"
+      });
+    }
+  }
+  const checkForLogout = useRef();
+  checkForLogout.current = ()=>{
+    if(LoginReducer.isLogout)
+    {
+      dispatch({
+        type: "light"
+      });
+      return navigate("/login");
+    }
+  }
   const [active,setActive] = useState(true);
   const [activeOnMobile,setActiveOnMobile] = useState(false);
   const [user,setUser] = useState(null);
   const [width,setWidth] = useState(250);
   const [collapsible,setCollapsible] = useState(false);
   const location = useLocation();
-
   let routing = location.pathname.split("/");
-
-
-  //start useEffect hook & function
-  const checkForLogout = ()=>{
-    if(LoginReducer.isLogout)
-    {
-      return navigate("/login");
-    }
-  }
-
-  useEffect(checkForLogout,[LoginReducer]);
-
-  const showUserInfo = ()=>{
+  const showUserInfo = useRef();
+  showUserInfo.current = ()=>{
     if(!user)
     {
       let tmp = sessionStorage.getItem("user");
@@ -83,19 +96,16 @@ const Admin = ()=>{
       return setUser(userInfo);
     }
   }
-
-const activeRoute = ()=>{
-  return navigate("/admin-panel/dashboard/modern");
-}
+  const activeRoute = useRef();
+  activeRoute.current = ()=>{
+      return navigate("/admin-panel/dashboard/modern");
+  }
 
   useEffect(()=>{
-    showUserInfo();
-    activeRoute();
-  },[user]);
-
-   //end useEffect hook & function
-
-
+    showUserInfo.current();
+    activeRoute.current();
+    checkForLogout.current()
+  },[user,LoginReducer]);
 
   // start - profile menu code
   const [parent,setParent] = useState(null);
@@ -196,12 +206,11 @@ const activeRoute = ()=>{
         <Drawer open={active} variant="persistent" sx={{
           width: width,
           "& .MuiDrawer-paper": {
-            width: width,
-            bgcolor: "white"
+            width: width
           }
         }}>
           <List sx={{ mt: 4 }} subheader={<ListSubheader>
-              <img src="images/logo.webp" width="200" alt="brand-logo" />
+              <img src={logo} width="200" alt="brand-logo" />
             </ListSubheader>} />
           {
             AdminMenu.map((admin)=>{
@@ -221,8 +230,7 @@ const activeRoute = ()=>{
         <Drawer open={activeOnMobile} variant="temporary" onClick={controlDrawerOnMobile} onClose={controlDrawerOnMobile} sx={{
           width: width,
           "& .MuiDrawer-paper": {
-            width: width,
-            bgcolor: "white"
+            width: width
           }
         }}>
           <List sx={{ mt: 4 }} subheader={<ListSubheader>
@@ -282,6 +290,9 @@ const activeRoute = ()=>{
 
             <Toolbar>
               <Stack direction="row" alignItems="center" spacing="5px">
+                <FormGroup>
+                  <FormControlLabel control={<Switch onChange={darkMode} />} label={mode} />
+                </FormGroup>
                 <IconButton color="inherit">
                   <span className="material-icons-outlined">shopping_basket</span>
                 </IconButton>
@@ -373,9 +384,9 @@ const activeRoute = ()=>{
           mt: 4,
           p: 3,
           transition: "0.1s",
-          bgcolor: "#f5f5f5",
-          height: "auto"
-        }}>
+          minHeight: "100vh",
+        }}
+        >
           <Breadcrumbs aria-label="breadcrumb" sx={{ my: 4 }}>
             {
               routing.map((item,index)=>{
@@ -386,6 +397,9 @@ const activeRoute = ()=>{
                     index: index,
                     length: routing.length-1
                   }} />
+                }
+                else {
+                  return null;
                 }
               })
             }

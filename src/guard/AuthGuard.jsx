@@ -1,4 +1,3 @@
-
 import { useAsync } from "react-async";
 
 import {
@@ -7,11 +6,8 @@ import {
 } from "react-router";
 
 import Cookies from "universal-cookie";
-
 import axios from "axios";
 axios.defaults.baseURL = "http://localhost:3434";
-
-
 
 const verifyToken = async ({token})=>{
   try {
@@ -26,7 +22,6 @@ const verifyToken = async ({token})=>{
     throw new Error(err);
   }
 }
-
 
 const AuthGuard = ()=>{
   const cookie = new Cookies();
@@ -43,9 +38,9 @@ const AuthGuard = ()=>{
   }
   if(error)
   {
-    return <Navigate to="/login" />
+   return <Navigate to="/login" />
   }
   return null;
-}
 
+}
 export default AuthGuard;

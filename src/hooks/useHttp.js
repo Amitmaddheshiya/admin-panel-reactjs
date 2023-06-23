@@ -1,32 +1,30 @@
 import axios from "axios";
 import {
-    useState,
-    useEffect
+  useState,
+  useEffect
 } from "react";
 
-
+axios.defaults.baseURL = "http://localhost:3434";
 
 const useHttp = (request)=>{
-    const [httpResponse,setHttpResponse] = useState(null);
-    const [httpError,setHttpError] = useState(null);
-    const [httpLoader,setHttpLoader] = useState(true);
+  const [httpResponse,setHttpResponse] = useState(null);
+  const [httpError,setHttpError] = useState(null);
+  const [httpLoader,setHttpLoader] = useState(true);
 
- const ajax = ()=>{
-axios(request)
-.then((response)=>{
-    setHttpResponse(response.data);
-})
-.catch((err)=>{
-    setHttpError(err.response); 
-})
-.finally(()=>{
-    setHttpLoader(false);
-  });
- }
+  const ajax = ()=>{
+    axios(request)
+    .then((response)=>{
+      setHttpResponse(response.data);
+    })
+    .catch((err)=>{
+      setHttpError(err.response);
+    })
+    .finally(()=>{
+      setHttpLoader(false);
+    });
+  }
 
- //jab jab ajax request karenge tab tab 
- //iske andar ka ajax() func call hoga
- useEffect(()=>{
+  useEffect(()=>{
     if(request)
     {
       ajax();

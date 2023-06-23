@@ -5,8 +5,9 @@ import {
 import {
   signupRequest
 } from "./Signup.action";
-
-
+import {
+  LoadingButton
+} from "@mui/lab";
 
 import Cookies from "universal-cookie";
 import {
@@ -24,13 +25,12 @@ import {
   Link
 } from "react-router-dom";
 
-import useHttp from "../../hooks/useHttp";
-
 import MediaQuery from "react-responsive";
 
 import {
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from "react";
 
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -41,10 +41,10 @@ const Signup = ()=>{
   const cookie = new Cookies();
 
   const signupForm = {
-    fullname: "er saurav",
-    mobile: "9199987267",
-    email: "ersaurav08@gmail.com",
-    password: "S@w3fdsfsdfd"
+    fullname: "",
+    mobile: "",
+    email: "",
+    password: ""
   }
   const signupFormError = {
     fullname: {
@@ -74,7 +74,8 @@ const Signup = ()=>{
     message: ""
   });
 
-  const checkForSignup = ()=>{
+  const checkForSignup = useRef();
+  checkForSignup.current = ()=>{
     if(SignupReducer.error)
     {
       return setSweetAlert({
@@ -97,7 +98,9 @@ const Signup = ()=>{
     }
   }
 
-  useEffect(checkForSignup,[SignupReducer]);
+  useEffect(()=>{
+    checkForSignup.current();
+  },[SignupReducer]);
 
   const Alert = ()=>{
     const alert = (
@@ -199,7 +202,7 @@ const Signup = ()=>{
 
   const emailSyntax = (input)=>{
     const value = input.value.trim();
-    const regExp = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    const regExp = /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/g;
     if(regExp.test(value))
     {
       return {
@@ -349,6 +352,7 @@ const Signup = ()=>{
                 onInput={mobileValidation}
               />
               <TextField
+                autoComplete="email"
                 error={error.email.state}
                 helperText={error.email.message}
                 label="Email"
@@ -360,6 +364,7 @@ const Signup = ()=>{
                 onInput={emailValidation}
               />
               <TextField
+                autoComplete="current-password"
                 error={error.password.state}
                 helperText={error.password.message}
                 type="password"
@@ -381,7 +386,7 @@ const Signup = ()=>{
                 <Button type="button" component={Link} to="login">Already have an account</Button>
               </Stack>
               <div>
-                <Button loading={SignupReducer.isLoading}
+                <LoadingButton loading={SignupReducer.isLoading}
                   disabled={
                     error.fullname.state ||
                     error.mobile.state ||
@@ -392,7 +397,7 @@ const Signup = ()=>{
                   type="submit"
                   sx={{py: 1}}
                   variant="contained"
-                >Signup</Button>
+                >Signup</LoadingButton>
               </div>
             </Stack>
           </form>

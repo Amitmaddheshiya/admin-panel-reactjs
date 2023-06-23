@@ -5,7 +5,7 @@ import {
 } from "./Revenue.state";
 
 import axios from "axios";
-axios.defaults.baseURL = "http://localhost:3434";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const revenueRequest = ()=>{
   return async (dispatch)=>{
@@ -18,10 +18,11 @@ const revenueRequest = ()=>{
         method: "get",
         url: "/revenue-updates"
       });
-      dispatch({
-        type: REVENUE_SUCCESS,
-        payload: payload.data
-      });
+        dispatch({
+          type: REVENUE_SUCCESS,
+          payload: payload.data
+        });
+
     }
     catch(err)
     {
