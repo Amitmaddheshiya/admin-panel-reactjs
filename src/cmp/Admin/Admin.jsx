@@ -330,7 +330,7 @@ const Admin = ()=>{
                          right: 14,
                          width: 10,
                          height: 10,
-                         bgcolor: 'background.paper',
+                         
                          transform: 'translateY(-50%) rotate(45deg)',
                          zIndex: 0,
                        },
@@ -384,7 +384,8 @@ const Admin = ()=>{
           mt: 4,
           p: 3,
           transition: "0.1s",
-          minHeight: "100vh",
+          height: "auto",
+          bgColor : AdminReducer.dark ? "inherit" : "#f5f5f5"
         }}
         >
           <Breadcrumbs aria-label="breadcrumb" sx={{ my: 4 }}>

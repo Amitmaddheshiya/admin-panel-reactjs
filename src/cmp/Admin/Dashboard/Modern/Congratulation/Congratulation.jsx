@@ -13,7 +13,13 @@ import {
   useState
 } from "react";
 
+import {
+  useSelector
+}from "react-redux";
+
 const Congratulation = ()=>{
+const {AdminReducer} = useSelector(response=>response);
+
   const options = {
     chart: {
       toolbar: {
@@ -38,7 +44,8 @@ const Congratulation = ()=>{
       offsetX: 8,
       offsetY: 8,
       style: {
-        fontSize: "18px"
+        fontSize: "18px",
+        color : AdminReducer.dark ? "white" : "inherit"
       }
     }
   };
@@ -51,7 +58,9 @@ const Congratulation = ()=>{
   const design = (
     <>
       <Grid item xs={12} sm={5}>
-        <Card className="chart-box">
+        <Card className="chart-box" sx={{
+          bgColor : AdminReducer.dark ? "#1E1E1E" : "inherit"
+        }}>
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               Sales

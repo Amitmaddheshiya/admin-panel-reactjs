@@ -3,11 +3,12 @@ import LoginReducer from "./cmp/Login/Login.reducer";
 import ForgotReducer from "./cmp/Forgot/Forgot.reducer";
 import RevenueReducer from "./cmp/Admin/Dashboard/Modern/RevenueUpdates/Revenue.reducer";
 import NotesReducer from "./cmp/Admin/Notes/Notes.reducer";
+import AdminReducer from "./cmp/Admin/Admin.reducer"
 import { legacy_createStore as createStore, applyMiddleware, combineReducers } from "redux";
 //import logger from "redux-logger";
 import thunk from "redux-thunk";
 const middlewares = applyMiddleware(
- // logger,
+  //logger,
   thunk
 );
 const root = combineReducers({
@@ -15,7 +16,8 @@ const root = combineReducers({
   LoginReducer,
   ForgotReducer,
   RevenueReducer,
-  NotesReducer
+  NotesReducer,
+  AdminReducer
 });
 const storage = createStore(root,{},middlewares);
 export default storage;

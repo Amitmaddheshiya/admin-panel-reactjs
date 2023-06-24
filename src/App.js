@@ -9,7 +9,8 @@ import 'material-icons/iconfont/material-icons.css';
 
 import {
   ThemeProvider,
-  createTheme
+  createTheme,
+  Paper
 } from "@mui/material";
 
 import {
@@ -20,6 +21,10 @@ import {
   lightBlue,
   cyan
 } from '@mui/material/colors';
+
+import {
+  useState
+} from "react";
 
 import Signup from "./cmp/Signup/Signup";
 import Login from "./cmp/Login/Login";
@@ -33,8 +38,14 @@ import AuthGuard from "./guard/AuthGuard";
 import "@fontsource/poppins/500.css";
 
 const App = ()=>{
+   const [mode,setMode] = useState("light");
+  storage.subscribe(()=>{
+    const {AdminReducer} = storage.getState();
+    AdminReducer.dark ? setMode("dark") : setMode("light")
+  })
   const Theme = createTheme({
     palette: {
+      mode: mode,
       primary: deepPurple,
       secondary: teal,
       error: pink,
@@ -51,6 +62,7 @@ const App = ()=>{
     <>
       <Provider store={storage}>
         <ThemeProvider theme={Theme}>
+          <Paper style={{minHeight:"100vh"}}>
             <Router>
               <Routes>
                 <Route path="/" element={<Signup />} />
@@ -67,6 +79,7 @@ const App = ()=>{
                 <Route path="*" element={<Notfound />} />
               </Routes>
             </Router>
+          </Paper>
         </ThemeProvider>
       </Provider>
     </>
