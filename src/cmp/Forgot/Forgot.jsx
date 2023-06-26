@@ -23,6 +23,9 @@ import {
 useNavigate
 } from "react-router-dom";
 
+
+import MediaQuery from "react-responsive";
+
 import {
 LoadingButton
 } from "@mui/lab";
@@ -109,7 +112,12 @@ const design = (
   <Container>
     <Grid container>
       <Grid item xs={12} sm={6}>
-        <h1>One</h1>
+      <MediaQuery minWidth={1224}>
+            <img src="images/auth.svg" alt="auth" width="100%" />
+          </MediaQuery>
+          <MediaQuery maxWidth={1224}>
+            <img src="images/mobile-auth.png" alt="auth" width="100%" />
+          </MediaQuery>
       </Grid>
       <Grid item xs={12} sm={6}>
         <h1>Forgot Password</h1>

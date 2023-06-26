@@ -11,7 +11,7 @@ import {
 } from "./Notes.state";
 
 import axios from "axios";
-axios.defaults.baseURL = "http://localhost:3434";
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const createNoteRequest = (formData)=>{
   return async (dispatch)=>{

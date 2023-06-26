@@ -10,7 +10,8 @@ import 'material-icons/iconfont/material-icons.css';
 import {
   ThemeProvider,
   createTheme,
-  Paper
+  Paper,
+  CircularProgress 
 } from "@mui/material";
 
 import {
@@ -26,16 +27,22 @@ import {
   useState
 } from "react";
 
-import Signup from "./cmp/Signup/Signup";
-import Login from "./cmp/Login/Login";
-import Forgot from "./cmp/Forgot/Forgot";
-import Admin from "./cmp/Admin/Admin";
-import Calendar from "./cmp/Admin/Calendar/Calendar";
-import Notes from "./cmp/Admin/Notes/Notes";
-import Modern from "./cmp/Admin/Dashboard/Modern/Modern";
-import Notfound from "./cmp/Notfound/Notfound";
-import AuthGuard from "./guard/AuthGuard";
+import "./App.css"
+
 import "@fontsource/poppins/500.css";
+
+import * as React from "react";
+
+const Signup = React.lazy(()=>import("./cmp/Signup/Signup"));
+const Login = React.lazy(()=>import("./cmp/Login/Login"));
+const Forgot = React.lazy(()=>import("./cmp/Forgot/Forgot"));
+const Admin = React.lazy(()=>import("./cmp/Admin/Admin"));
+const Calendar = React.lazy(()=>import("./cmp/Admin/Calendar/Calendar"));
+const Notes = React.lazy(()=>import("./cmp/Admin/Notes/Notes"));
+const Modern = React.lazy(()=>import("./cmp/Admin/Dashboard/Modern/Modern"));
+const Notfound = React.lazy(()=>import("./cmp/Notfound/Notfound"));
+const AuthGuard = React.lazy(()=>import("./guard/AuthGuard"));
+
 
 const App = ()=>{
    const [mode,setMode] = useState("light");
@@ -43,6 +50,16 @@ const App = ()=>{
     const {AdminReducer} = storage.getState();
     AdminReducer.dark ? setMode("dark") : setMode("light")
   })
+
+const Loader = ()=>{
+  const l = (
+    <>
+    <CircularProgress color="info" className="loader" />
+    </>
+  );
+  return l;
+}
+
   const Theme = createTheme({
     palette: {
       mode: mode,
@@ -65,18 +82,54 @@ const App = ()=>{
           <Paper style={{minHeight:"100vh"}}>
             <Router>
               <Routes>
-                <Route path="/" element={<Signup />} />
-                <Route path="login" element={<Login />} />
-                <Route path="forgot-password" element={<Forgot />} />
+
+                <Route path="/" element={
+                  <React.Suspense fallback={<Loader />}>
+                    <Signup />
+                  </React.Suspense>
+                } />
+                <Route path="login" element={
+                  <React.Suspense fallback={<Loader />}>
+                    <Login />
+                  </React.Suspense>
+                } />
+                <Route path="forgot-password" element={
+                  <React.Suspense fallback={<Loader />}>
+                    <Forgot />
+                  </React.Suspense>
+                } />
+
+
                
-                  <Route path="admin-panel" element={<Admin />}>
-                    <Route path="dashboard/modern" element={<Modern />} />
-                    <Route path="calendar" element={<Calendar />} />
-                    <Route path="notes" element={<Notes />} />
-                    <Route path="*" element={<Notfound />} />
+                  <Route path="admin-panel" element={
+                    <React.Suspense fallback={<Loader />}>
+                      <Admin />
+                    </React.Suspense>
+                  }>
+                    <Route path="dashboard/modern" element={
+                      <React.Suspense fallback={<Loader />}>
+                        <Modern />
+                      </React.Suspense>
+                    } />
+                    <Route path="calendar" element={
+                      <React.Suspense fallback={<Loader />}>
+                        <Calendar />
+                      </React.Suspense>
+                    } />
+                    <Route path="notes" element={
+                      <React.Suspense fallback={<Loader />}>
+                        <Notes />
+                      </React.Suspense>
+                    } />
+
+                    <Route path="*" element={
+                    <React.Suspense fallback={<Loader />}>
+                      <Notfound />
+                    </React.Suspense>
+                  } />
+                    
                   </Route>
                 
-                <Route path="*" element={<Notfound />} />
               </Routes>
             </Router>
           </Paper>
